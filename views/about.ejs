@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en" data-theme="dim">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/main.css" />
+</head>
+<body class="bg-base-200">
+  <%- include('partials/navbar') %>
+
+  <section class="container mx-auto p-6">
+    <div class="hero bg-base-100 rounded-2xl shadow">
+      <div class="hero-content">
+        <div>
+          <h1 class="text-4xl font-bold">About</h1>
+          <p class="py-4">All about me: WEB322 student, building Node/Express apps with EJS + Tailwind. Into C++, SQL, and shipping clean code.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-6 mt-8">
+      <div><img class="rounded-2xl shadow" src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1200" alt="me-ish" /></div>
+      <div class="prose">
+        <h2>Vansh in short</h2>
+        <ul>
+          <li>Seneca CPA – OOP244, SFT221, DBS, WEB</li>
+          <li>Love building full-stack projects and testing</li>
+          <li>Goal: clean, readable, testable code</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en" data-theme="dim">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/main.css" />
+</head>
+<body class="bg-base-200">
+  <%- include('partials/navbar') %>
+
+  <section class="container mx-auto p-6">
+    <div class="hero bg-base-100 rounded-2xl shadow">
+      <div class="hero-content text-center">
+        <div class="max-w-xl">
+          <h1 class="text-5xl font-bold">404</h1>
+          <p class="py-4"><%= message %></p>
+          <a class="btn" href="#" onclick="history.back(); return false;">Go Back</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en" data-theme="dim">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/main.css" />
+</head>
+<body class="bg-base-200">
+  <%- include('partials/navbar') %>
+
+  <section class="container mx-auto p-6">
+    <div class="hero bg-base-100 rounded-2xl shadow">
+      <div class="hero-content text-center">
+        <div class="max-w-2xl">
+          <h1 class="text-4xl font-bold">Explore Climate Solutions</h1>
+          <p class="py-4">Browse projects by sector and see details for each solution.</p>
+          <a class="btn btn-primary" href="/solutions/projects">View All Projects</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3 sample cards (pick any 3 IDs you like) -->
+    <div class="grid md:grid-cols-3 gap-6 mt-8">
+      <div class="card bg-base-100 shadow">
+        <figure><img src="https://drawdown.org/sites/default/files/solutions/solution_abandonedfarmland01.jpg" alt="" /></figure>
+        <div class="card-body">
+          <h2 class="card-title">Abandoned Farmland Restoration</h2>
+          <p>Restoring degraded land to productive carbon-sequestering uses.</p>
+          <div class="card-actions justify-end">
+            <a class="btn btn-secondary" href="/solutions/projects/1">Details</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card bg-base-100 shadow">
+        <figure><img src="https://drawdown.org/sites/default/files/solutions/solution_alternativecement02.jpg" alt="" /></figure>
+        <div class="card-body">
+          <h2 class="card-title">Alternative Cement</h2>
+          <p>Lower-carbon cement reduces emissions from construction.</p>
+          <div class="card-actions justify-end">
+            <a class="btn btn-secondary" href="/solutions/projects/2">Details</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card bg-base-100 shadow">
+        <figure><img src="https://drawdown.org/sites/default/files/solutions/solution_concentratedsolar01.jpg" alt="" /></figure>
+        <div class="card-body">
+          <h2 class="card-title">Concentrated Solar Power</h2>
+          <p>Using mirrors to concentrate sunlight and generate power.</p>
+          <div class="card-actions justify-end">
+            <a class="btn btn-secondary" href="/solutions/projects/9">Details</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</body>
+</html>

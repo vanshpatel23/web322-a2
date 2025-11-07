@@ -1,0 +1,7 @@
+/* Tailwind v4 style build file */
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+@plugin "daisyui";
+
+/* optional: global tweaks */
+body { @apply min-h-screen; }

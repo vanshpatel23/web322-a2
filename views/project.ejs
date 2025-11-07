@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en" data-theme="dim">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/main.css" />
+</head>
+<body class="bg-base-200">
+  <%- include('partials/navbar') %>
+
+  <section class="container mx-auto p-6">
+    <div class="hero bg-base-100 rounded-2xl shadow">
+      <div class="hero-content text-center">
+        <div class="max-w-2xl">
+          <h1 class="text-4xl font-bold"><%= project.title %></h1>
+          <p class="py-4">Below, you will find detailed information about the project.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-8 mt-8">
+      <img class="rounded-2xl shadow" src="<%= project.feature_img_url %>" alt="<%= project.title %>" />
+      <div class="prose">
+        <p><strong>Sector:</strong> <%= project.sector %></p>
+        <p><%= project.intro_short %></p>
+        <h3>Impact</h3>
+        <p><%= project.impact %></p>
+        <p><a class="btn btn-primary" href="<%= project.original_source_url %>" target="_blank" rel="noreferrer">Learn more</a></p>
+        <p class="italic" id="quoteBox">Loading quote…</p>
+        <p class="mt-4"><a class="btn" href="#" onclick="history.back(); return false;">Back</a></p>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      try {
+        const res = await fetch("https://dummyjson.com/quotes/random");
+        const data = await res.json();
+        document.getElementById("quoteBox").textContent = `"${data.quote}" — ${data.author}`;
+      } catch (e) {
+        document.getElementById("quoteBox").textContent = "Could not load quote.";
+      }
+    });
+  </script>
+</body>
+</html>
