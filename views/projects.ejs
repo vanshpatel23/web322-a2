@@ -1,55 +1,50 @@
-<!doctype html>
-<html lang="en" data-theme="dim">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title><%= title %></title>
-  <link rel="stylesheet" href="/css/main.css" />
-</head>
-<body class="bg-base-200">
-  <%- include('partials/navbar') %>
 
-  <section class="container mx-auto p-6">
-    <div class="hero bg-base-100 rounded-2xl shadow">
-      <div class="hero-content text-center">
-        <div class="max-w-2xl">
-          <h1 class="text-4xl font-bold">Projects <%= sector ? `– ${sector}` : "" %></h1>
-          <p class="py-4">
-            Quick links:
-            <a class="btn btn-sm" href="/solutions/projects?sector=Transportation">Transportation</a>
-            <a class="btn btn-sm" href="/solutions/projects?sector=Electricity">Electricity</a>
-            <a class="btn btn-sm" href="/solutions/projects?sector=Industry">Industry</a>
-            <a class="btn btn-sm" href="/solutions/projects?sector=Buildings">Buildings</a>
-            <a class="btn btn-sm" href="/solutions/projects?sector=Food">Food</a>
-          </p>
-        </div>
-      </div>
-    </div>
+const fs = require("fs").promises;
+const path = require("path");
 
-    <div class="overflow-x-auto mt-8">
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Sector</th>
-            <th>Summary</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <% projects.forEach(p => { %>
-            <tr>
-              <td class="font-semibold"><%= p.title %></td>
-              <td>
-                <a class="btn btn-ghost btn-xs" href="/solutions/projects?sector=<%= encodeURIComponent(p.sector) %>"><%= p.sector %></a>
-              </td>
-              <td class="max-w-xl"><%= p.summary_short %></td>
-              <td><a class="btn btn-primary btn-sm" href="/solutions/projects/<%= p.id %>">Details</a></td>
-            </tr>
-          <% }) %>
-        </tbody>
-      </table>
-    </div>
-  </section>
-</body>
-</html>
+let projects = [];
+let sectors = [];
+
+function readJSON(relPath) {
+  const full = path.join(__dirname, "..", relPath); // works on Vercel + local
+  return fs.readFile(full, "utf8").then(JSON.parse);
+}
+
+module.exports = {
+  initialize() {
+   
+    return Promise.all([
+      readJSON("data/projectData.json"),
+      readJSON("data/sectorData.json")
+    ])
+      .then(([proj, sect]) => {
+        projects = Array.isArray(proj) ? proj : [];
+        sectors = Array.isArray(sect) ? sect : [];
+        if (!projects.length) throw "No project data loaded";
+        return;
+      });
+  },
+
+  getAllProjects() {
+    return Promise.resolve(projects);
+  },
+
+  getProjectsBySector(sector) {
+    const list = projects.filter(p => (p.sector || "").toLowerCase() === String(sector).toLowerCase());
+    return list.length ? Promise.resolve(list) : Promise.reject(`No projects found for sector: ${sector}`);
+  },
+
+  getProjectById(id) {
+    const key = String(id).trim();
+    // allow numeric id or string id depending on your data
+    const found =
+      projects.find(p => String(p.id) === key) ||
+      projects.find(p => String(p["id"]) === key);
+    return found ? Promise.resolve(found) : Promise.reject("No project found for that id");
+  },
+
+  // optional helper if you need sectors elsewhere
+  getSectors() {
+    return Promise.resolve(sectors);
+  }
+};
