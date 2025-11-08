@@ -1,17 +1,14 @@
 <%- include('partials/head') %>
 
 <main class="max-w-6xl mx-auto px-6 py-8">
-  <h1 class="text-3xl font-bold mb-6">Projects – <%= sector %></h1>
+  <h1 class="text-3xl font-bold mb-6"><%= title %></h1>
 
-  <!-- quick sector links -->
-  <div class="mb-6">
-    <ul class="flex flex-wrap gap-3">
-      <li><a class="link" href="/solutions/projects?sector=Electricity">Electricity</a></li>
-      <li><a class="link" href="/solutions/projects?sector=Transportation">Transportation</a></li>
-      <li><a class="link" href="/solutions/projects?sector=Industry">Industry</a></li>
-      <li><a class="link" href="/solutions/projects?sector=Buildings">Buildings</a></li>
-      <li><a class="link" href="/solutions/projects?sector=Food, Agriculture, and Land Use">Food, Agriculture, and Land Use</a></li>
-    </ul>
+  <div class="mb-6 flex flex-wrap gap-3">
+    <a href="/solutions/projects?sector=Electricity" class="btn btn-outline">Electricity</a>
+    <a href="/solutions/projects?sector=Transportation" class="btn btn-outline">Transportation</a>
+    <a href="/solutions/projects?sector=Industry" class="btn btn-outline">Industry</a>
+    <a href="/solutions/projects?sector=Buildings" class="btn btn-outline">Buildings</a>
+    <a href="/solutions/projects?sector=Food, Agriculture, and Land Use" class="btn btn-outline">Food, Agriculture, and Land Use</a>
   </div>
 
   <% if (projects && projects.length) { %>
@@ -19,28 +16,23 @@
       <table class="table w-full">
         <thead>
           <tr>
-            <th class="text-left">ID</th>
-            <th class="text-left">Title</th>
-            <th class="text-left">Sector</th>
-            <th></th>
+            <th>ID</th><th>Title</th><th>Sector</th><th></th>
           </tr>
         </thead>
         <tbody>
           <% projects.forEach(p => { %>
-            <tr class="hover:bg-gray-50">
+            <tr>
               <td><%= p.id %></td>
               <td><%= p.title %></td>
               <td><%= p.sector %></td>
-              <td class="text-right">
-                <a class="btn btn-sm btn-primary" href="/solutions/projects/<%= p.id %>">View Details</a>
-              </td>
+              <td><a href="/solutions/projects/<%= p.id %>" class="btn btn-sm btn-primary">View Details</a></td>
             </tr>
           <% }) %>
         </tbody>
       </table>
     </div>
   <% } else { %>
-    <p class="text-gray-600">No projects found for this sector.</p>
+    <p class="text-gray-500 mt-4">No projects available.</p>
   <% } %>
 </main>
 
