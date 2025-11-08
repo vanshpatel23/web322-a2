@@ -1,28 +1,38 @@
-<%- include('partials/navbar') %>
+<%- include('partials/head') %>
 
-<main class="max-w-5xl mx-auto px-6 py-8">
-  <h1 class="text-3xl font-bold mb-6 text-center"><%= title %></h1>
+<main class="max-w-6xl mx-auto px-6 py-8">
+  <h1 class="text-3xl font-bold mb-6">Projects – <%= sector %></h1>
 
-  <% if (projects && projects.length > 0) { %>
-    <div class="overflow-x-auto">
+  <!-- quick sector links -->
+  <div class="mb-6">
+    <ul class="flex flex-wrap gap-3">
+      <li><a class="link" href="/solutions/projects?sector=Electricity">Electricity</a></li>
+      <li><a class="link" href="/solutions/projects?sector=Transportation">Transportation</a></li>
+      <li><a class="link" href="/solutions/projects?sector=Industry">Industry</a></li>
+      <li><a class="link" href="/solutions/projects?sector=Buildings">Buildings</a></li>
+      <li><a class="link" href="/solutions/projects?sector=Food, Agriculture, and Land Use">Food, Agriculture, and Land Use</a></li>
+    </ul>
+  </div>
+
+  <% if (projects && projects.length) { %>
+    <div class="overflow-x-auto bg-white rounded-xl shadow">
       <table class="table w-full">
         <thead>
-          <tr class="bg-gray-100">
-            <th class="py-2 px-3 text-left">ID</th>
-            <th class="py-2 px-3 text-left">Title</th>
-            <th class="py-2 px-3 text-left">Sector</th>
-            <th class="py-2 px-3 text-center">More Info</th>
+          <tr>
+            <th class="text-left">ID</th>
+            <th class="text-left">Title</th>
+            <th class="text-left">Sector</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
           <% projects.forEach(p => { %>
-            <tr class="border-b hover:bg-gray-50">
-              <td class="py-2 px-3"><%= p.id %></td>
-              <td class="py-2 px-3"><%= p.title %></td>
-              <td class="py-2 px-3"><%= p.sector %></td>
-              <td class="py-2 px-3 text-center">
-                <a href="/solutions/projects/<%= p.id %>"
-                   class="text-blue-600 hover:underline">View Details</a>
+            <tr class="hover:bg-gray-50">
+              <td><%= p.id %></td>
+              <td><%= p.title %></td>
+              <td><%= p.sector %></td>
+              <td class="text-right">
+                <a class="btn btn-sm btn-primary" href="/solutions/projects/<%= p.id %>">View Details</a>
               </td>
             </tr>
           <% }) %>
@@ -30,14 +40,8 @@
       </table>
     </div>
   <% } else { %>
-    <div class="text-center text-gray-600 mt-10">
-      <p>No projects found for this sector.</p>
-      <a href="/solutions/projects"
-         class="text-blue-600 hover:underline">Back to all projects</a>
-    </div>
+    <p class="text-gray-600">No projects found for this sector.</p>
   <% } %>
 </main>
 
-<footer class="text-center py-6 mt-10 border-t text-sm text-gray-500">
-  © <%= new Date().getFullYear() %> WEB322 - Patel Vansh Maheshkumar
-</footer>
+<%- include('partials/footer') %>
