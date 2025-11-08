@@ -5,7 +5,7 @@
 *  https://www.senecapolytechnic.ca/about/policies/academic-integrity-policy.html
 *
 *  Name: Patel Vansh Maheshkumar   Student ID: 129544243   Date: 2025-11-07
-*  Published URL: https://<your-vercel-url>
+*  Published URL: https://web322-a2-tan.vercel.app
 ********************************************************************************/
 
 const express = require("express");
@@ -15,24 +15,14 @@ app.set("views", path.join(__dirname, "views"));
 
 const HTTP_PORT = process.env.PORT || 8080;
 
+// data module
 const projectData = require("./modules/projects");
 
-// view engine + static
+// setup EJS and static files
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 
-/* ---------- WAIT FOR DATA INITIALIZATION (works on Vercel + local) ---------- */
-const initPromise = projectData.initialize();
-app.use(async (req, res, next) => {
-  try {
-    await initPromise;           // first request will wait until JSON is loaded
-    next();
-  } catch (e) {
-    next(e);
-  }
-});
-
-/* -------------------- STATIC VIEWS -------------------- */
+// -------------------- STATIC PAGES --------------------
 app.get("/", (req, res) => {
   res.render("home", { title: "Climate Solutions" });
 });
@@ -41,66 +31,68 @@ app.get("/about", (req, res) => {
   res.render("about", { title: "About" });
 });
 
-/* -------------------- DYNAMIC VIEWS -------------------- */
-// list by sector (or all)
-app.get("/solutions/projects", (req, res) => {
+// -------------------- PROJECT ROUTES --------------------
+app.get("/solutions/projects", async (req, res) => {
   const sector = req.query.sector;
-  if (sector) {
-    projectData
-      .getProjectsBySector(sector)
-      .then((projects) => {
-        if (!projects.length) {
-          return res
-            .status(404)
-            .render("404", { title: "Not Found", message: `No projects found for sector: ${sector}` });
-        }
-        res.render("projects", { title: `Projects – ${sector}`, projects, sector });
-      })
-      .catch((err) =>
-        res.status(404).render("404", { title: "Not Found", message: err })
-      );
-  } else {
-    projectData
-      .getAllProjects()
-      .then((projects) =>
-        res.render("projects", { title: "All Projects", projects, sector: "All" })
-      )
-      .catch((err) =>
-        res.status(500).render("404", { title: "Error", message: err })
-      );
+
+  try {
+    if (sector) {
+      const projects = await projectData.getProjectsBySector(sector);
+      if (!projects.length) {
+        return res.status(404).render("404", {
+          title: "Not Found",
+          message: `No projects found for sector: ${sector}`,
+        });
+      }
+
+      return res.render("projects", {
+        title: `Projects – ${sector}`,
+        projects,
+        sector,
+      });
+    }
+
+    // show all projects
+    const projects = await projectData.getAllProjects();
+    return res.render("projects", {
+      title: "All Projects",
+      projects,
+      sector: "All",
+    });
+  } catch (err) {
+    console.error("[/solutions/projects] error:", err);
+    return res
+      .status(500)
+      .render("404", { title: "Error", message: String(err) });
   }
 });
 
-// details by id
-app.get("/solutions/projects/:id", (req, res) => {
-  projectData
-    .getProjectById(req.params.id)
-    .then((project) => res.render("project", { title: project.title, project }))
-    .catch((err) =>
-      res.status(404).render("404", { title: "Not Found", message: err })
-    );
+// project details
+app.get("/solutions/projects/:id", async (req, res) => {
+  try {
+    const project = await projectData.getProjectById(req.params.id);
+    res.render("project", { title: project.title, project });
+  } catch (err) {
+    res
+      .status(404)
+      .render("404", { title: "Not Found", message: String(err) });
+  }
 });
 
-// 404 catch-all
+// 404 fallback
 app.use((req, res) => {
-  res
-    .status(404)
-    .render("404", { title: "Not Found", message: "Sorry, we couldn't find what you're looking for." });
+  res.status(404).render("404", {
+    title: "Not Found",
+    message: "Sorry, we couldn't find what you're looking for.",
+  });
 });
 
-/* -------------------- EXPORT + LOCAL LISTEN -------------------- */
-// Export immediately for Vercel
-module.exports = app;
-
-// Only listen locally (npm start)
-if (require.main === module) {
-  initPromise
-    .then(() => {
-      app.listen(HTTP_PORT, () =>
-        console.log(`Server running on port ${HTTP_PORT}`)
-      );
-    })
-    .catch((err) => {
-      console.error("Initialization failed:", err);
-    });
-}
+// initialize and start server
+projectData
+  .initialize()
+  .then(() => {
+    app.listen(HTTP_PORT, () =>
+      console.log(`Server running on port ${HTTP_PORT}`)
+    );
+  })
+  .catch((err) => console.log(err));
