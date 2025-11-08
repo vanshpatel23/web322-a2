@@ -1,50 +1,43 @@
+<%- include('partials/navbar') %>
 
-const fs = require("fs").promises;
-const path = require("path");
+<main class="max-w-5xl mx-auto px-6 py-8">
+  <h1 class="text-3xl font-bold mb-6 text-center"><%= title %></h1>
 
-let projects = [];
-let sectors = [];
+  <% if (projects && projects.length > 0) { %>
+    <div class="overflow-x-auto">
+      <table class="table w-full">
+        <thead>
+          <tr class="bg-gray-100">
+            <th class="py-2 px-3 text-left">ID</th>
+            <th class="py-2 px-3 text-left">Title</th>
+            <th class="py-2 px-3 text-left">Sector</th>
+            <th class="py-2 px-3 text-center">More Info</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% projects.forEach(p => { %>
+            <tr class="border-b hover:bg-gray-50">
+              <td class="py-2 px-3"><%= p.id %></td>
+              <td class="py-2 px-3"><%= p.title %></td>
+              <td class="py-2 px-3"><%= p.sector %></td>
+              <td class="py-2 px-3 text-center">
+                <a href="/solutions/projects/<%= p.id %>"
+                   class="text-blue-600 hover:underline">View Details</a>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  <% } else { %>
+    <div class="text-center text-gray-600 mt-10">
+      <p>No projects found for this sector.</p>
+      <a href="/solutions/projects"
+         class="text-blue-600 hover:underline">Back to all projects</a>
+    </div>
+  <% } %>
+</main>
 
-function readJSON(relPath) {
-  const full = path.join(__dirname, "..", relPath); // works on Vercel + local
-  return fs.readFile(full, "utf8").then(JSON.parse);
-}
-
-module.exports = {
-  initialize() {
-   
-    return Promise.all([
-      readJSON("data/projectData.json"),
-      readJSON("data/sectorData.json")
-    ])
-      .then(([proj, sect]) => {
-        projects = Array.isArray(proj) ? proj : [];
-        sectors = Array.isArray(sect) ? sect : [];
-        if (!projects.length) throw "No project data loaded";
-        return;
-      });
-  },
-
-  getAllProjects() {
-    return Promise.resolve(projects);
-  },
-
-  getProjectsBySector(sector) {
-    const list = projects.filter(p => (p.sector || "").toLowerCase() === String(sector).toLowerCase());
-    return list.length ? Promise.resolve(list) : Promise.reject(`No projects found for sector: ${sector}`);
-  },
-
-  getProjectById(id) {
-    const key = String(id).trim();
-    // allow numeric id or string id depending on your data
-    const found =
-      projects.find(p => String(p.id) === key) ||
-      projects.find(p => String(p["id"]) === key);
-    return found ? Promise.resolve(found) : Promise.reject("No project found for that id");
-  },
-
-  // optional helper if you need sectors elsewhere
-  getSectors() {
-    return Promise.resolve(sectors);
-  }
-};
+<footer class="text-center py-6 mt-10 border-t text-sm text-gray-500">
+  © <%= new Date().getFullYear() %> WEB322 - Patel Vansh Maheshkumar
+</footer>
