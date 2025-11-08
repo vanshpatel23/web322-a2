@@ -10,6 +10,9 @@
 
 const express = require("express");
 const app = express();
+const path = require("path");
+app.set("views", path.join(__dirname, "views"));
+
 const HTTP_PORT = process.env.PORT || 8080;
 
 const projectData = require("./modules/projects");
