@@ -14,9 +14,22 @@ const HTTP_PORT = process.env.PORT || 8080;
 
 const projectData = require("./modules/projects");
 
+// view engine + static
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 
+/* ---------- WAIT FOR DATA INITIALIZATION (works on Vercel + local) ---------- */
+const initPromise = projectData.initialize();
+app.use(async (req, res, next) => {
+  try {
+    await initPromise;           // first request will wait until JSON is loaded
+    next();
+  } catch (e) {
+    next(e);
+  }
+});
+
+/* -------------------- STATIC VIEWS -------------------- */
 app.get("/", (req, res) => {
   res.render("home", { title: "Climate Solutions" });
 });
@@ -25,14 +38,15 @@ app.get("/about", (req, res) => {
   res.render("about", { title: "About" });
 });
 
-
+/* -------------------- DYNAMIC VIEWS -------------------- */
+// list by sector (or all)
 app.get("/solutions/projects", (req, res) => {
   const sector = req.query.sector;
   if (sector) {
     projectData
       .getProjectsBySector(sector)
       .then((projects) => {
-        if (projects.length === 0) {
+        if (!projects.length) {
           return res
             .status(404)
             .render("404", { title: "Not Found", message: `No projects found for sector: ${sector}` });
@@ -54,7 +68,7 @@ app.get("/solutions/projects", (req, res) => {
   }
 });
 
-
+// details by id
 app.get("/solutions/projects/:id", (req, res) => {
   projectData
     .getProjectById(req.params.id)
@@ -64,27 +78,26 @@ app.get("/solutions/projects/:id", (req, res) => {
     );
 });
 
-
+// 404 catch-all
 app.use((req, res) => {
   res
     .status(404)
     .render("404", { title: "Not Found", message: "Sorry, we couldn't find what you're looking for." });
 });
 
+/* -------------------- EXPORT + LOCAL LISTEN -------------------- */
+// Export immediately for Vercel
+module.exports = app;
 
-projectData
-  .initialize()
-  .then(() => {
-    if (require.main === module) {
-      // Local run
+// Only listen locally (npm start)
+if (require.main === module) {
+  initPromise
+    .then(() => {
       app.listen(HTTP_PORT, () =>
         console.log(`Server running on port ${HTTP_PORT}`)
       );
-    } else {
-      // Vercel serverless export
-      module.exports = app;
-    }
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+    })
+    .catch((err) => {
+      console.error("Initialization failed:", err);
+    });
+}
